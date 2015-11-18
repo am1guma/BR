@@ -119,20 +119,6 @@ namespace BRaVO
                     }
                 }
             }
-
-            //for (int x = 0; x < newLines.Count; x++)
-            //{
-            //    for (int m = 0; m < shapes.Count(); m++)
-            //    {
-            //        for (int k = 0; k < shapes[m].P.Count; k++)
-            //        {
-            //            if (CheckWithNewLines2(newLines[x].P[2], shapes[m].P[k], x) && CheckWithAllAxes(newLines[x].P[2], shapes[m].P[k]))
-            //            {
-            //                g.DrawLine(new Pen(Color.Blue), newLines[x].P[2], shapes[m].P[k]);
-            //            }
-            //        }
-            //    }
-            //}
         }
 
         private bool CheckWithAllAxes(Point a, Point b)
@@ -186,6 +172,14 @@ namespace BRaVO
             b2.Checked = false;
             b3.Checked = false;
             b5.Checked = false;
+
+            for (int i = 1; i < shapes.Count; i++)
+            {
+                for(int j = 0; j < shapes[i].P.Count; j++)
+                {
+                    g.DrawLine(new Pen(Color.Black), shapes[i].P[j].X, pictureBox1.Height, shapes[i].P[j].X, 0);
+                }
+            }
         }
 
         private void b5_Click(object sender, EventArgs e)
