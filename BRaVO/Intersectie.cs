@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 
 namespace BRaVO
 {
@@ -12,6 +7,8 @@ namespace BRaVO
         private Point a, b, c, d;
         private double m1, m2;
         private double a1, a2, b1, b2, c1, c2;
+        public double x { get; set; }
+        public double y { get; set; }
         public Intersectie(Point a, Point b, Point c, Point d)
         {
             this.a = a;
@@ -41,8 +38,8 @@ namespace BRaVO
                 return false;
             if ((a2 != 0) && (b2 != 0) && (c2 != 0) && (a1 / a2 == b1 / b2) && (a1 / a2 == c1 / c2) && (b1 / b2 == c1 / c2))
                 return true;
-            double x = (c2 * b1 - c1 * b2) / (a1 * b2 - a2 * b1);
-            double y = (-1 * c1 - a1 * x) / b1;
+            x = (c2 * b1 - c1 * b2) / (a1 * b2 - a2 * b1);
+            y = (-1 * c1 - a1 * x) / b1;
             if ((x == b.X && y == b.Y) || (x == a.X && y == a.Y))
                 return false;
             if ((x == d.X && y == d.Y) || (x == c.X && y == c.Y))
@@ -52,6 +49,12 @@ namespace BRaVO
             if (((x > c.X && x > d.X) || (x < c.X && x < d.X)) || ((y > c.Y && y > d.Y) || (y < c.Y && y < d.Y)))
                 return false;
             return true;
+        }
+
+        public void SetIntersectionPoint()
+        {
+            x = (c2 * b1 - c1 * b2) / (a1 * b2 - a2 * b1);
+            y = (-1 * c1 - a1 * x) / b1;
         }
     }
 }

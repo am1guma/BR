@@ -16,3 +16,12 @@ C:\Users\Oana Maria Palcu\Documents\GitHub\BRaVO\BRaVO\obj\Debug\BRaVO.csprojRes
 C:\Users\Oana Maria Palcu\Documents\GitHub\BRaVO\BRaVO\obj\Debug\BRaVO.Form1.resources
 C:\Users\Oana Maria Palcu\Documents\GitHub\BRaVO\BRaVO\obj\Debug\BRaVO.Properties.Resources.resources
 C:\Users\Oana Maria Palcu\Documents\GitHub\BRaVO\BRaVO\obj\Debug\BRaVO.csproj.GenerateResource.Cache
+C:\Users\vmeic_000\Documents\GitHub\BR\BR\BRaVO\bin\Debug\BRaVO.exe.config
+C:\Users\vmeic_000\Documents\GitHub\BR\BR\BRaVO\obj\Debug\BRaVO.exe
+C:\Users\vmeic_000\Documents\GitHub\BR\BR\BRaVO\obj\Debug\BRaVO.pdb
+C:\Users\vmeic_000\Documents\GitHub\BR\BR\BRaVO\bin\Debug\BRaVO.exe
+C:\Users\vmeic_000\Documents\GitHub\BR\BR\BRaVO\bin\Debug\BRaVO.pdb
+C:\Users\vmeic_000\Documents\GitHub\BR\BR\BRaVO\obj\Debug\BRaVO.csprojResolveAssemblyReference.cache
+C:\Users\vmeic_000\Documents\GitHub\BR\BR\BRaVO\obj\Debug\BRaVO.Form1.resources
+C:\Users\vmeic_000\Documents\GitHub\BR\BR\BRaVO\obj\Debug\BRaVO.Properties.Resources.resources
+C:\Users\vmeic_000\Documents\GitHub\BR\BR\BRaVO\obj\Debug\BRaVO.csproj.GenerateResource.Cache
