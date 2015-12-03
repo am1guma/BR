@@ -35,49 +35,57 @@ namespace BRaVO
 
         private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
         {
-            if (_id == "b1")
+            try
             {
-                if (e.Button.Equals(MouseButtons.Left))
+                if (_id == "b1")
                 {
-                    _points.Add(new Point(e.X, e.Y));
-                    _g.DrawRectangle(new Pen(Color.Black), e.X - 2, e.Y - 2, 4, 4);
-                    if (_points.Count > 1)
+                    if (e.Button.Equals(MouseButtons.Left))
                     {
-                        _g.DrawLine(new Pen(Color.Black), _points[_points.Count - 1], _points[_points.Count - 2]);
-                        _segments.Add(new Segment(_points[_points.Count - 1], _points[_points.Count - 2]));
-                    }
+                        _points.Add(new Point(e.X, e.Y));
+                        _g.DrawRectangle(new Pen(Color.Black), e.X - 2, e.Y - 2, 4, 4);
+                        if (_points.Count > 1)
+                        {
+                            _g.DrawLine(new Pen(Color.Black), _points[_points.Count - 1], _points[_points.Count - 2]);
+                            _segments.Add(new Segment(_points[_points.Count - 1], _points[_points.Count - 2]));
+                        }
 
+                    }
+                    else if (_points.Count > 2)
+                    {
+                        _g.DrawLine(new Pen(Color.Black), _points[_points.Count - 1], _points[0]);
+                        _segments.Add(new Segment(_points[_points.Count - 1], _points[0]));
+                        if (_so > 0)
+                            _g.FillPolygon(new SolidBrush(Color.Black), _points.ToArray());
+                        _polygons.Add(new Polygon {Segmente = _segments});
+                        _points = new List<Point>();
+                        _segments = new List<Segment>();
+                        _so++;
+                    }
                 }
-                else if (_points.Count > 2)
-                {
-                    _g.DrawLine(new Pen(Color.Black), _points[_points.Count - 1], _points[0]);
-                    _segments.Add(new Segment(_points[_points.Count - 1], _points[0]));
-                    if (_so > 0)
-                        _g.FillPolygon(new SolidBrush(Color.Black), _points.ToArray());
-                    _polygons.Add(new Polygon { Segmente = _segments });
-                    _points = new List<Point>();
-                    _segments = new List<Segment>();
-                    _so++;
-                }
+                if (_id == "b2")
+                    if (_ss < 2)
+                    {
+                        if (_ss == 0)
+                        {
+                            _g.FillEllipse(new SolidBrush(Color.Green), e.X - 6, e.Y - 6, 12, 12);
+                            _startPoint = new Point(e.X, e.Y);
+                            _spDefined = true;
+                        }
+
+                        else if (_ss == 1)
+                        {
+                            _g.FillEllipse(new SolidBrush(Color.Red), e.X - 6, e.Y - 6, 12, 12);
+                            _endPoint = new Point(e.X, e.Y);
+                            _epDefined = true;
+                        }
+                        _ss++;
+                    }
             }
-            if (_id == "b2")
-                if (_ss < 2)
-                {
-                    if (_ss == 0)
-                    {
-                        _g.FillEllipse(new SolidBrush(Color.Green), e.X - 6, e.Y - 6, 12, 12);
-                        _startPoint = new Point(e.X, e.Y);
-                        _spDefined = true;
-                    }
-                        
-                    else if (_ss == 1)
-                    {
-                        _g.FillEllipse(new SolidBrush(Color.Red), e.X - 6, e.Y - 6, 12, 12);
-                        _endPoint = new Point(e.X, e.Y);
-                        _epDefined = true;
-                    }
-                    _ss++;
-                }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            
         }
 
         private void b1_Click(object sender, EventArgs e)
@@ -102,124 +110,313 @@ namespace BRaVO
 
         private void b3_Click(object sender, EventArgs e)
         {
-            _id = "b3";
-            b3.Checked = true;
-            b1.Checked = false;
-            b2.Checked = false;
-            b4.Checked = false;
-            b5.Checked = false;
-
-            if (_spDefined && _epDefined)
+            try
             {
-                PolygonManager.ListOfPolygons = _polygons;
-                SegmentsManager.Segments = PolygonManager.GetAllPolygonsSegments();
-                var allPoints = PolygonManager.GetAllPoints();
-                for (var i = 0; i < allPoints.Count; i++)
+                _id = "b3";
+                b3.Checked = true;
+                b1.Checked = false;
+                b2.Checked = false;
+                b4.Checked = false;
+                b5.Checked = false;
+
+                if (_spDefined && _epDefined)
                 {
-                    for (var j = 0; j < allPoints.Count; j++)
+                    PolygonManager.ListOfPolygons = _polygons;
+                    SegmentsManager.Segments = PolygonManager.GetAllPolygonsSegments();
+                    var allPoints = PolygonManager.GetAllPoints();
+                    for (var i = 0; i < allPoints.Count; i++)
                     {
-                        if (i != j)
+                        for (var j = 0; j < allPoints.Count; j++)
                         {
-                            var s = new Segment(allPoints[i], allPoints[j]);
-                            if (!SegmentsManager.CheckIfSegmentAlreadyExists(s) &&
-                                IntersectieManager.CheckIfASegmentIntersectsAnotherSegment(s) &&
-                                !PolygonManager.CheckIfSegmentIntersectTwoPointsFromAnInternalShape(s))
+                            if (i != j)
                             {
-                                _g.DrawLine(new Pen(Color.Black), allPoints[i], allPoints[j]);
-                                SegmentsManager.Segments.Add(s);
+                                var s = new Segment(allPoints[i], allPoints[j]);
+                                if (!SegmentsManager.CheckIfSegmentAlreadyExists(s) &&
+                                    IntersectieManager.CheckIfASegmentIntersectsAnotherSegment(s) &&
+                                    !PolygonManager.CheckIfSegmentIntersectTwoPointsFromAnInternalShape(s))
+                                {
+                                    _g.DrawLine(new Pen(Color.Black), allPoints[i], allPoints[j]);
+                                    SegmentsManager.Segments.Add(s);
+                                }
                             }
                         }
                     }
+                    DefineTriangles();
+                    CreateGraph();
+                    FindTheShortestPath();
                 }
-                DefineTriangles();
-                CreateGraph();
-                FindTheShortestPath();
+                else
+                {
+                    MessageBox.Show(@"StartPoint and EndPoint are not defined!");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show(@"StartPoint and EndPoint are not defined!");
+                Console.WriteLine(ex.Message);
             }
             
         }
 
         private void b4_Click(object sender, EventArgs e)
         {
-            _id = "b4";
-            b4.Checked = true;
-            b1.Checked = false;
-            b2.Checked = false;
-            b3.Checked = false;
-            b5.Checked = false;
-
-            PolygonManager.ListOfPolygons = _polygons.Where(p => !p.Equals(_polygons.First())).ToList();
-            PolygonManager.Contur = _polygons.First();
-            SegmentsManager.Segments = PolygonManager.GetAllPolygonsSegments();
-            var allPoints = PolygonManager.GetAllPoints();
-            SegmentsManager.InteriorSegments = new List<Segment>();
-            PolygonManager.ListOfMiddlePoints = new List<Point>();
-            for (var i = 0; i < allPoints.Count; i++)
+            try
             {
-                var ySus = new Point(allPoints[i].X,allPoints[i].Y - 1);
-                var yJos = new Point(allPoints[i].X,allPoints[i].Y + 1);
-                if (IntersectieManager.CanDraw(allPoints[i],ySus))
+                _id = "b4";
+                b4.Checked = true;
+                b1.Checked = false;
+                b2.Checked = false;
+                b3.Checked = false;
+                b5.Checked = false;
+
+                Pen greenPen = new Pen(Color.Purple, 3);
+
+                if (_spDefined && _epDefined)
                 {
-                    var sus = new Segment(allPoints[i], new Point(allPoints[i].X, 0));
-                    var ptSus = IntersectieManager.GetLastIntersectionPoint(sus);
-                    var segSus = new Segment(allPoints[i], ptSus);
-                    _g.DrawLine(new Pen(Color.Blue), segSus.A, segSus.B);
-                    SegmentsManager.InteriorSegments.Add(segSus);
+
+                    PolygonManager.ListOfPolygons = _polygons.Where(p => !p.Equals(_polygons.First())).ToList();
+                    PolygonManager.Contur = _polygons.First();
+                    SegmentsManager.Segments = PolygonManager.GetAllPolygonsSegments();
+                    var allPoints = PolygonManager.GetAllPoints();
+                    SegmentsManager.InteriorSegments = new List<Segment>();
+                    PolygonManager.ListOfMiddlePoints = new List<Point>();
+                    NodManager.Noduri = new List<Nod>();
+                    DrumManager.Drumuri = new List<Drum>();
+
+                    NodManager.Noduri.Add(new Nod(Id, _startPoint));
+                    Id++;
+                    NodManager.Noduri.Add(new Nod(Id, _endPoint));
+                    Id++;
+
+                    for (var i = 0; i < allPoints.Count; i++)
+                    {
+                        var ySus = new Point(allPoints[i].X, allPoints[i].Y - 1);
+                        var yJos = new Point(allPoints[i].X, allPoints[i].Y + 1);
+                        if (IntersectieManager.CanDraw(allPoints[i], ySus))
+                        {
+                            var sus = new Segment(allPoints[i], new Point(allPoints[i].X, 0));
+                            var ptSus = IntersectieManager.GetLastIntersectionPoint(sus);
+                            var segSus = new Segment(allPoints[i], ptSus);
+                            _g.DrawLine(new Pen(Color.Black), segSus.A, segSus.B);
+                            SegmentsManager.InteriorSegments.Add(segSus);
+                        }
+                        if (IntersectieManager.CanDraw(allPoints[i], yJos))
+                        {
+                            var jos = new Segment(allPoints[i], new Point(allPoints[i].X, pictureBox1.Height));
+                            var ptJos = IntersectieManager.GetFirstIntersectionPoint(jos);
+                            var segJos = new Segment(allPoints[i], ptJos);
+                            _g.DrawLine(new Pen(Color.Black), segJos.A, segJos.B);
+                            SegmentsManager.InteriorSegments.Add(segJos);
+                        }
+                    }
+
+                    foreach (var s in SegmentsManager.InteriorSegments)
+                    {
+                        _g.FillEllipse(new SolidBrush(Color.Blue), s.GetTheMiddlePoint().X - 6,
+                            s.GetTheMiddlePoint().Y - 6, 12, 12);
+                        PolygonManager.ListOfMiddlePoints.Add(new Point(s.GetTheMiddlePoint().X, s.GetTheMiddlePoint().Y));
+                        NodManager.Noduri.Add(new Nod(Id, new Point(s.GetTheMiddlePoint().X, s.GetTheMiddlePoint().Y)));
+                        Id++;
+                    }
+
+                    var newList = PolygonManager.ListOfMiddlePoints.OrderBy(p => p.X);
+                    var max = newList.Last();
+
+                    double lungimeMinimaStart = 10000;
+                    double lungimeMinimaEnd = 10000;
+
+                    var SegToBeDrawStart = new Segment(new Point(0, 0), new Point(0, 0));
+                    var SegToBeDrawEnd = new Segment(new Point(0, 0), new Point(0, 0));
+
+                    foreach (var p in newList)
+                    {
+                        var aux = p;
+                        var notDraw = true;
+                        var cnt = 0;
+                        if (!p.X.Equals(max.X))
+                        {
+                            var lf = new List<int>();
+                            while (notDraw)
+                            {
+                                var tempPoint =
+                                    newList.FirstOrDefault(
+                                        pt =>
+                                            (pt.X >= aux.X && !pt.Y.Equals(aux.Y) && !pt.X.Equals(p.X) &&
+                                             !lf.Contains(pt.Y)));
+                                lf.Add(tempPoint.Y);
+                                aux = tempPoint;
+
+                                var tp = newList.Where(ptr => ptr.X == tempPoint.X).ToList();
+                                if (tp.Count() == 1)
+                                {
+                                    var seg = new Segment(p, tempPoint);
+                                    if (!IntersectieManager.CheckIfTwoPointsIntersectAShapeTrapez(seg.A, seg.B))
+                                    {
+                                        cnt++;
+                                        _g.DrawLine(new Pen(Color.Blue), seg.A, seg.B);
+                                        DrumManager.Drumuri.Add(new Drum(NodManager.GetNod(seg.A),
+                                            NodManager.GetNod(seg.B), seg.GetLength()));
+                                        notDraw = false;
+                                    }
+                                    if (tempPoint.Equals(max) && notDraw)
+                                        notDraw = false;
+                                }
+                                else if (tp.Count() == 2)
+                                {
+                                    var seg1 = new Segment(p, tempPoint);
+                                    var seg2 = new Segment(p, tp[1]);
+                                    if (!IntersectieManager.CheckIfTwoPointsIntersectAShapeTrapez(seg1.A, seg1.B))
+                                    {
+                                        _g.DrawLine(new Pen(Color.Blue), seg1.A, seg1.B);
+                                        DrumManager.Drumuri.Add(new Drum(NodManager.GetNod(seg1.A),
+                                            NodManager.GetNod(seg1.B), seg1.GetLength()));
+                                        notDraw = false;
+                                    }
+                                    if (tempPoint.Equals(max) && notDraw)
+                                        notDraw = false;
+
+                                    if (!IntersectieManager.CheckIfTwoPointsIntersectAShapeTrapez(seg2.A, seg2.B))
+                                    {
+                                        _g.DrawLine(new Pen(Color.Blue), seg2.A, seg2.B);
+                                        DrumManager.Drumuri.Add(new Drum(NodManager.GetNod(seg2.A),
+                                            NodManager.GetNod(seg2.B), seg2.GetLength()));
+                                        notDraw = false;
+                                    }
+                                    if (tempPoint.Equals(max) && notDraw)
+                                        notDraw = false;
+                                }
+                            }
+                        }
+
+                        var segment1 = new Segment(p, _startPoint);
+                        if (!IntersectieManager.CheckIfTwoPointsIntersectAShapeTrapez(segment1.A, segment1.B))
+                        {
+                            if (segment1.GetLength() < lungimeMinimaStart)
+                            {
+                                lungimeMinimaStart = segment1.GetLength();
+                                SegToBeDrawStart = segment1;
+                            }
+                        }
+
+                        var segment2 = new Segment(p, _endPoint);
+                        if (!IntersectieManager.CheckIfTwoPointsIntersectAShapeTrapez(segment2.A, segment2.B))
+                        {
+                            if (segment2.GetLength() < lungimeMinimaEnd)
+                            {
+                                lungimeMinimaEnd = segment2.GetLength();
+                                SegToBeDrawEnd = segment2;
+                            }
+                        }
+                    }
+                    _g.DrawLine(new Pen(Color.Blue), SegToBeDrawStart.A, SegToBeDrawStart.B);
+                    DrumManager.Drumuri.Add(new Drum(NodManager.GetNod(SegToBeDrawStart.A),
+                        NodManager.GetNod(SegToBeDrawStart.B), SegToBeDrawStart.GetLength()));
+                    var ptr1 = newList.FirstOrDefault(pz => pz.X == SegToBeDrawStart.A.X && pz.Y != SegToBeDrawStart.A.Y);
+                    if (ptr1.X != 0 && ptr1.Y != 0)
+                    {
+                        var segz1 = new Segment(ptr1, _startPoint);
+                        if (!IntersectieManager.CheckIfTwoPointsIntersectAShapeTrapez(segz1.A, segz1.B))
+                        {
+                            _g.DrawLine(new Pen(Color.Blue), segz1.A, segz1.B);
+                            DrumManager.Drumuri.Add(new Drum(NodManager.GetNod(segz1.A), NodManager.GetNod(segz1.B),
+                                segz1.GetLength()));
+                        }
+                    }
+
+
+                    _g.DrawLine(new Pen(Color.Blue), SegToBeDrawEnd.A, SegToBeDrawEnd.B);
+                    DrumManager.Drumuri.Add(new Drum(NodManager.GetNod(SegToBeDrawEnd.A),
+                        NodManager.GetNod(SegToBeDrawEnd.B), SegToBeDrawEnd.GetLength()));
+                    var ptr2 = newList.FirstOrDefault(pz => pz.X == SegToBeDrawEnd.A.X && pz.Y != SegToBeDrawEnd.A.Y);
+                    if (ptr2.X != 0 && ptr2.Y != 0)
+                    {
+                        var segz2 = new Segment(ptr2, _endPoint);
+                        if (!IntersectieManager.CheckIfTwoPointsIntersectAShapeTrapez(segz2.A, segz2.B))
+                        {
+                            _g.DrawLine(new Pen(Color.Blue), segz2.A, segz2.B);
+                            DrumManager.Drumuri.Add(new Drum(NodManager.GetNod(segz2.A), NodManager.GetNod(segz2.B),
+                                segz2.GetLength()));
+                        }
+                    }
+
+
+
+                    var aFostGasit = false;
+
+                    var primulSegment = new Segment(_startPoint, _endPoint);
+                    if (!IntersectieManager.CheckIfTwoPointsIntersectAShapeTrapez(primulSegment.A, primulSegment.B))
+                    {
+                        _g.DrawLine(greenPen, primulSegment.A, primulSegment.B);
+                        aFostGasit = true;
+                    }
+
+                    if (!aFostGasit)
+                    {
+
+                        var gr = new Graph();
+
+                        foreach (var n in NodManager.Noduri)
+                        {
+                            var dict = new Dictionary<char, int>();
+                            var nodesThatCanBeReached = NodManager.CheckWehereANodCanGo(n);
+                            foreach (var nd in nodesThatCanBeReached)
+                            {
+                                dict.Add(nd.Id, Convert.ToInt32(new Segment(n.P, nd.P).GetLength()));
+                            }
+                            gr.add_vertex(n.Id, dict);
+                        }
+
+                        var ls = gr.shortest_path(NodManager.Noduri[0].Id, NodManager.Noduri[1].Id);
+                        if (ls.Count > 0)
+                        {
+                            _g.DrawLine(greenPen, NodManager.Noduri[0].P, NodManager.GetNodWithId(ls[ls.Count - 1]).P);
+                            for (var i = 0; i < ls.Count() - 1; i++)
+                            {
+                                var n = NodManager.GetNodWithId(ls[i]);
+                                var n2 = NodManager.GetNodWithId(ls[i + 1]);
+                                _g.DrawLine(greenPen, n.P, n2.P);
+                            }
+                        }
+                    }
+
                 }
-                if (IntersectieManager.CanDraw(allPoints[i], yJos))
+                else
                 {
-                    var jos = new Segment(allPoints[i], new Point(allPoints[i].X, pictureBox1.Height));
-                    var ptJos = IntersectieManager.GetFirstIntersectionPoint(jos);
-                    var segJos = new Segment(allPoints[i], ptJos);
-                    _g.DrawLine(new Pen(Color.Blue), segJos.A, segJos.B);
-                    SegmentsManager.InteriorSegments.Add(segJos);
+                    MessageBox.Show(@"StartPoint and EndPoint are not defined!");
                 }
             }
-
-            foreach (var s in SegmentsManager.InteriorSegments)
+            catch (Exception ex)
             {
-                _g.FillEllipse(new SolidBrush(Color.Blue), s.GetTheMiddlePoint().X - 6, s.GetTheMiddlePoint().Y - 6, 12, 12);
-                PolygonManager.ListOfMiddlePoints.Add(new Point(s.GetTheMiddlePoint().X, s.GetTheMiddlePoint().Y));
+                Console.WriteLine(ex.Message);
             }
-
-            //for (var i = 0; i < PolygonManager.ListOfMiddlePoints.Count(); i++)
-            //{
-            //    for (var j = 0; j < PolygonManager.ListOfMiddlePoints.Count(); j++)
-            //    {
-            //        if (i != j && PolygonManager.ListOfMiddlePoints[i].X!= PolygonManager.ListOfMiddlePoints[j].X)
-            //        {
-            //            var seg = new Segment(PolygonManager.ListOfMiddlePoints[i], PolygonManager.ListOfMiddlePoints[j]);
-            //            if (!IntersectieManager.CheckIfSegmentIntersectInteriorSegment(seg))
-            //            {
-            //                _g.DrawLine(new Pen(Color.Blue), seg.A, seg.B);
-            //            }
-            //        }
-            //    }
-            //}
         }
 
         private void b5_Click(object sender, EventArgs e)
         {
-            _id = "b5";
-            b5.Checked = true;
-            b1.Checked = false;
-            b2.Checked = false;
-            b3.Checked = false;
-            b4.Checked = false;
-            _g.Clear(Color.GhostWhite);
+            try
+            {
+                _id = "b5";
+                b5.Checked = true;
+                b1.Checked = false;
+                b2.Checked = false;
+                b3.Checked = false;
+                b4.Checked = false;
+                _g.Clear(Color.GhostWhite);
 
-            _polygons.Clear();
-            _points.Clear();
-            _segments.Clear();
+                _polygons.Clear();
+                _points.Clear();
+                _segments.Clear();
 
-            NodManager.Noduri = new List<Nod>();
-            DrumManager.Drumuri = new List<Drum>();
+                NodManager.Noduri = new List<Nod>();
+                DrumManager.Drumuri = new List<Drum>();
+                Id = 'A';
 
-            _ss = 0;
-            _so = 0;
+                _ss = 0;
+                _so = 0;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         private void DefineTriangles()

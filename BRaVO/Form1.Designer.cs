@@ -99,7 +99,7 @@
             this.b3.Size = new System.Drawing.Size(159, 59);
             this.b3.Text = "DescompunereTriunghiulara";
             this.b3.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.b3.ToolTipText = "Drumul optim";
+            this.b3.ToolTipText = "Drumul optim prin descompunere triunghiulara";
             this.b3.Click += new System.EventHandler(this.b3_Click);
             // 
             // b4
@@ -110,6 +110,7 @@
             this.b4.Size = new System.Drawing.Size(159, 59);
             this.b4.Text = "DescopunereTrapezoidala";
             this.b4.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.b4.ToolTipText = "Drumul optim prin descompunere trapezoidala";
             this.b4.Click += new System.EventHandler(this.b4_Click);
             // 
             // b5

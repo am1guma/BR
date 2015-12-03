@@ -52,6 +52,21 @@ namespace BRaVO
             return true;
         }
 
+        public static bool CheckIfTwoPointsIntersectAShapeTrapez(Point a, Point b)
+        {
+            for (var i = 0; i < PolygonManager.ListOfPolygons.Count; i++)
+            {
+                var ls = PolygonManager.ListOfPolygons[i].Segmente;
+                foreach (var s in ls)
+                {
+                    VerificaIntersectia = new Intersectie(s.A, s.B, a, b);
+                    if (VerificaIntersectia.Intersectation())
+                        return true;
+                }
+            }
+            return false;
+        }
+
         private static List<Segment> GetAllSegmentesThatAreIntersectedByASegment(Segment s)
         {
             var ls = new List<Segment>();
@@ -121,14 +136,16 @@ namespace BRaVO
         {
             foreach (var seg in SegmentsManager.InteriorSegments)
             {
-                VerificaIntersectia = new Intersectie(seg.A, seg.B, s.A, s.B);
-                if (VerificaIntersectia.Intersectation())
+                if (!s.A.X.Equals(seg.A.X) && !s.A.X.Equals(seg.B.X) && !s.B.X.Equals(seg.A.X) && !s.B.X.Equals(seg.B.X))
                 {
-                    var pt = new Point(Convert.ToInt32(VerificaIntersectia.x), Convert.ToInt32(VerificaIntersectia.y));
-                    if (!(pt.Equals(s.A) || pt.Equals(s.B)))
-                        return true;
+                    VerificaIntersectia = new Intersectie(seg.A, seg.B, s.A, s.B);
+                    if (VerificaIntersectia.Intersectation())
+                    {
+                        var pt = new Point(Convert.ToInt32(VerificaIntersectia.x), Convert.ToInt32(VerificaIntersectia.y));
+                        if (!(pt.Equals(s.A) || pt.Equals(s.B)))
+                            return true;
+                    }
                 }
-                    
             }
             return false;
         }
